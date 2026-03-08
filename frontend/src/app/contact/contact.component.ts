@@ -21,6 +21,8 @@ import { MatFormFieldModule, MatLabel, MatHint, MatError } from '@angular/materi
 import { MatCardModule } from '@angular/material/card'
 
 import { MatIconModule } from '@angular/material/icon'
+import createDOMPurify from 'dompurify';
+const DOMPurify = createDOMPurify(window);
 
 library.add(faStar, faPaperPlane)
 
@@ -79,6 +81,9 @@ export class ContactComponent implements OnInit {
   }
 
   save () {
+    const cleanComment = DOMPurify.sanitize(this.feedbackControl.value);
+    this.feedback.comment = cleanComment;
+    
     this.feedback.captchaId = this.captchaId
     this.feedback.captcha = this.captchaControl.value
 
