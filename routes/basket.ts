@@ -16,7 +16,15 @@ export function retrieveBasket () {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const id = req.params.id
-      const basket = await BasketModel.findOne({ where: { id }, include: [{ model: ProductModel, paranoid: false, as: 'Products' }] })
+
+      const basketId = req.params.id;
+      const authenticatedUserId = req.user.id 
+
+      let basket = BasketModel.findOne({where: { id: basketId, UserId: authenticatedUserId }}).then(basket => {
+        if (!basket) return res.status(403).send("Access Denied");
+        res.json(basket);
+      });
+      //const basket = await BasketModel.findOne({ where: { id }, include: [{ model: ProductModel, paranoid: false, as: 'Products' }] })
       /* jshint eqeqeq:false */
       challengeUtils.solveIf(challenges.basketAccessChallenge, () => {
         const user = security.authenticatedUsers.from(req)
